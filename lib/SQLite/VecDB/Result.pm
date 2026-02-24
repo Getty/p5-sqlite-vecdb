@@ -1,6 +1,6 @@
 package SQLite::VecDB::Result;
 # ABSTRACT: Search result from SQLite::VecDB
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 use Moose;
 

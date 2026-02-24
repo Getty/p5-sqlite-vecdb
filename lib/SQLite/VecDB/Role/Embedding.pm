@@ -1,6 +1,6 @@
 package SQLite::VecDB::Role::Embedding;
 # ABSTRACT: Langertha embedding integration for SQLite::VecDB collections
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 use Moose::Role;
 use Carp qw( croak );

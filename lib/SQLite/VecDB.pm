@@ -1,6 +1,6 @@
 package SQLite::VecDB;
 # ABSTRACT: SQLite as a vector database using sqlite-vec
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 use Moose;
 use DBI;

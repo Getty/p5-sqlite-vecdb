@@ -1,3 +1,5 @@
+{{$NEXT}}
+
 0.001     2026-02-24 23:24:36Z
   - Initial release
   - Core: add, search, get, delete, count, add_batch

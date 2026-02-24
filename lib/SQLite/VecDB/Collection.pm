@@ -1,6 +1,6 @@
 package SQLite::VecDB::Collection;
 # ABSTRACT: A named vector collection in SQLite::VecDB
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 use Moose;
 use JSON::MaybeXS qw( encode_json decode_json );
