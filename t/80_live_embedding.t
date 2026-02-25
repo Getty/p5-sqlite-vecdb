@@ -3,8 +3,8 @@ use Test2::V0;
 eval { require SQLite::VecDB };
 skip_all "SQLite::VecDB dependencies not met: $@" if $@;
 
-my $api_key = $ENV{TEST_LANGERTHA_OPENAI_API_KEY};
-skip_all 'Set TEST_LANGERTHA_OPENAI_API_KEY for live embedding tests' unless $api_key;
+my $api_key = $ENV{TEST_SQLITE_VECDB_OPENAI_API_KEY};
+skip_all 'Set TEST_SQLITE_VECDB_OPENAI_API_KEY for live embedding tests' unless $api_key;
 
 eval { require Langertha::Engine::OpenAI };
 skip_all "Langertha::Engine::OpenAI not available: $@" if $@;
