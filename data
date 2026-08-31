@@ -1,0 +1,14 @@
+---
+class: standard
+created: 2026-08-31T04:36:17Z
+id: 2
+priority: medium
+status: backlog
+tags:
+- api
+- collection
+title: No update/upsert path — re-adding an existing id croaks on UNIQUE
+updated: 2026-08-31T04:36:17Z
+---
+
+meta_${name}.id is UNIQUE, so calling add() twice with the same id dies with "Failed to add vector: UNIQUE constraint failed". There is no update() or upsert option to replace a stored vector/metadata. Add an explicit update (or add(..., replace => 1)) that rewrites both the vec_ and meta_ rows in one transaction, with a regression test.
