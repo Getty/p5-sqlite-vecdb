@@ -1,0 +1,4 @@
+---
+board:
+  name: SQLite-VecDB
+version: 1
