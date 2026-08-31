@@ -1,0 +1,7 @@
+claude: true
+prompt: >
+  Drain the SQLite::VecDB karr board. Pick the top actionable ticket, delegate
+  behavior-relevant work to the sqlite-vecdb-worker agent, verify with
+  `prove -lr t/` (report skips as skips, never as passes), and hand off to review.
+  Never run `dzil release`. Anything about the sqlite-vec binary itself belongs to
+  the twin repo p5-alien-sqlite-vec — file a ticket there, don't edit it.
