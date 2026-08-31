@@ -1,0 +1,14 @@
+---
+class: standard
+created: 2026-08-31T04:36:21Z
+id: 3
+priority: low
+status: backlog
+tags:
+- api
+- collection
+title: No way to list/iterate entries in a collection
+updated: 2026-08-31T04:36:21Z
+---
+
+Collection exposes count() but no way to enumerate stored ids/entries without a search vector. Consider an ids() or each() iterator over meta_${name}. Confirm this is wanted before building — small scope, real gap.
