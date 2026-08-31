@@ -1,0 +1,14 @@
+---
+class: standard
+created: 2026-08-31T04:36:13Z
+id: 1
+priority: medium
+status: backlog
+tags:
+- api
+- result
+title: Result->vector is never populated by search or get
+updated: 2026-08-31T04:36:13Z
+---
+
+SQLite::VecDB::Result has a `vector` attribute (predicate has_vector) documented as "The stored vector, if requested", but neither Collection::search nor Collection::get ever set it, and there is no option to request it. Either wire an include-vectors path (read the vec0 embedding back and populate the attr) or drop the dead attribute. Decide and make the code and POD agree.
