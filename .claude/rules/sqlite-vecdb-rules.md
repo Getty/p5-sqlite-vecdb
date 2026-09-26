@@ -38,7 +38,7 @@ Depends on whether the Agent/Task tool is available to you.
   | Task | Agent |
   |---|---|
   | Implement / refactor / debug behavior-relevant code | `sqlite-vecdb-worker` (default) |
-  | Pre-release audit | `sqlite-vecdb-release-checker` |
+  | Commits, `Changes`, card → done, pre-release audit | `sqlite-vecdb-release-manager` |
 
 - **You cannot spawn subagents** (you ARE a `sqlite-vecdb-*` agent): the lock does not apply —
   implement, refactor, debug and test per these rules.
@@ -46,6 +46,9 @@ Depends on whether the Agent/Task tool is available to you.
 Behavior-relevant = everything under `lib/` (extension loading, the vec0/meta SQL, the KNN
 query, transactions, the embedding role) and `t/`. Prose in `README.md` and `Changes` bullets
 are not.
+
+**Only `sqlite-vecdb-release-manager` commits.** A worker leaves a commit-ready tree and hands its card
+to `review`; you then dispatch `sqlite-vecdb-release-manager` to cut the commit and close the card.
 
 ## Twin coupling — `p5-alien-sqlite-vec`
 
@@ -58,7 +61,7 @@ release together, so a cpanfile floor ahead of CPAN is staging, not a bug.
 ## Coordination — karr board (always in scope)
 
 Ticket coordination is the orchestrating agent's job, so `karr` is always in scope — don't
-invoke the `kanban-issues-karr-cli` skill first, just use it. Git-native kanban; state lives in
+invoke the `kanban-issues-karr-coordination` skill first, just use it. Git-native kanban; state lives in
 `refs/karr/*`.
 
 - `karr list --compact` / `karr board` — open work · `karr show ID` — detail

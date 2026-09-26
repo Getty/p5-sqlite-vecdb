@@ -13,10 +13,10 @@ principle and the lane split are in `.claude/rules/sqlite-vecdb-rules.md`.
 | Task | Agent |
 |---|---|
 | Implement / refactor / debug behavior-relevant code (lib/, t/) | `sqlite-vecdb-worker` (default) |
-| Pre-release audit | `sqlite-vecdb-release-checker` |
+| Commits, `Changes`, card → done, pre-release audit | `sqlite-vecdb-release-manager` |
 
 The agents carry their skills via `briefing.skills` (see `.claude/agents/`); the main agent
 delegates rather than loading them. Skill sources live under `.claude/skills/` — architecture
 and invariants in `sqlite-vecdb-core`, house conventions in `getty-perl-core` /
 `getty-perl-moose`, release in `getty-perl-release-author-getty` / `perl-release-dist-ini`,
-coordination in `kanban-issues-karr-cli`.
+coordination in `kanban-issues-karr-coordination`.
