@@ -2,7 +2,6 @@
 name: sqlite-vecdb-worker
 description: "Default SQLite::VecDB worker — implement, refactor, debug, and test code in this distribution. Pre-loaded with the sqlite-vec architecture (extension loading, vec0 + metadata layout, KNN query, embedding role), Moose, and release conventions. Owns everything behavior-relevant under lib/ and t/. Leaves a commit-ready tree; never commits — commits belong to sqlite-vecdb-release-manager."
 model: inherit
-allowed-tools: Read, Edit, Write, Bash, Glob, Grep
 briefing:
   skills:
     - sqlite-vecdb-core
