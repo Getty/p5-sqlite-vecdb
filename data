@@ -1,0 +1,22 @@
+---
+class: standard
+created: 2026-10-06T19:47:34Z
+id: 6
+priority: low
+status: backlog
+tags:
+- bug
+- transactions
+- review-2026-10-06
+title: add_batch dies with 'Already in a transaction' when the caller has one open
+updated: 2026-10-06T19:47:34Z
+---
+
+`lib/SQLite/VecDB/Collection.pm:266-281`: `add_batch` calls `$dbh->begin_work` unconditionally (`Collection.pm:269`). `add` and `delete` both check `$dbh->{AutoCommit}` first and join an outer transaction (`Collection.pm:109-110`, `Collection.pm:227-228`); `add_batch` does not.
+
+Reproduced: `$db->dbh->begin_work; $c->add_batch({ id => 'z', vector => [0,1,0] })` -> `DBD::SQLite::db begin_work failed: Already in a transaction at lib/SQLite/VecDB/Collection.pm line 269`. On the error path the `eval { $dbh->rollback }` at `Collection.pm:277` would also roll back the caller's transaction if it got that far.
+
+Done when: `add_batch` uses the same `$need_txn` guard as `add` (commit/rollback only a transaction it opened itself), plus a test that batches inside an outer transaction.
+
+---
+Fleet review 2026-10-06 · kind: bug · confidence: verified
