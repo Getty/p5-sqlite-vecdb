@@ -1,0 +1,23 @@
+---
+class: standard
+created: 2026-10-06T19:47:25Z
+id: 4
+priority: medium
+status: backlog
+tags:
+- bug
+- schema
+- review-2026-10-06
+title: Reopening a collection with different dimensions or distance_metric is accepted
+  silently
+updated: 2026-10-06T19:47:25Z
+---
+
+`lib/SQLite/VecDB/Collection.pm:70-79`: `_ensure_tables` does `INSERT OR IGNORE INTO _vecdb_collections (name, dimensions, distance_metric)` followed by `CREATE VIRTUAL TABLE IF NOT EXISTS`. For an existing collection both are no-ops, and nothing compares the stored `dimensions` / `distance_metric` with the ones the caller passed. `_vecdb_collections` records exactly this information and is never read back.
+
+Reproduced: create `docs` with `dimensions => 3`, then `SQLite::VecDB->new(db_file => same, dimensions => 4)->collection('docs')` succeeds; `add` with a 4-element vector passes the module's own check (`Collection.pm:101-102`, against the wrong 4) and only then dies inside sqlite-vec with `Dimension mismatch ... Expected 3 dimensions but received 4`. The metric case is worse because nothing fails at all: a collection created with `l2` and reopened as the default `cosine` keeps returning L2 distances that the caller reads as cosine distances.
+
+Done when: `_ensure_tables` reads the stored row for an existing collection and croaks with both values named on a mismatch (or adopts the stored values - decide and document), with a test for dimensions and for the metric.
+
+---
+Fleet review 2026-10-06 · kind: bug · confidence: verified
