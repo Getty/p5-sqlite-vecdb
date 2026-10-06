@@ -1,0 +1,24 @@
+---
+class: standard
+created: 2026-10-06T19:47:30Z
+id: 5
+priority: medium
+status: backlog
+tags:
+- bug
+- sql
+- validation
+- review-2026-10-06
+title: Collection name and distance_metric are interpolated into DDL unvalidated;
+  a bad name leaves a half-created collection
+updated: 2026-10-06T19:47:30Z
+---
+
+`lib/SQLite/VecDB/Collection.pm:75-89` builds `"vec_${name}"`, `"meta_${name}"` and `distance_metric=$metric` by string interpolation; both attributes are plain `isa => 'Str'` (`Collection.pm:11-15`, `Collection.pm:34-38`). The same interpolation is in every query (`add`, `search`, `get`, `delete`, `count`).
+
+Reproduced with a name containing a double quote (`x" USING vec0(embedding float[3]); DROP TABLE "meta_docs"; --`): the registry row is inserted, the first `CREATE VIRTUAL TABLE` runs with the truncated identifier, and the call then dies with `near "USING": syntax error at lib/SQLite/VecDB/Collection.pm line 81`. DBD::SQLite executes only the first statement of a `do`, so the trailing `DROP TABLE` did not run - but the database is left with a registry entry (`collections()` lists the garbage name) and a vec table without its meta table. A typo in `distance_metric` surfaces the same way, as a raw vec0 constructor error.
+
+Done when: `name` is restricted to an identifier-safe pattern (e.g. `/\A[A-Za-z0-9_]+\z/`) and `distance_metric` to the metrics sqlite-vec knows (`cosine`, `l2`, `l1`), both croaking in the constructor before any SQL runs, with tests in `t/15_errors.t`.
+
+---
+Fleet review 2026-10-06 · kind: bug · confidence: verified
