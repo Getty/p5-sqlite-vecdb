@@ -8,7 +8,8 @@ distribution. The sqlite-vec **binary** comes from the twin distribution `p5-ali
 ## Delegation
 
 Delegate behavior-relevant code to the right agent instead of touching it yourself — the
-principle and the lane split are in `.claude/rules/sqlite-vecdb-rules.md`.
+delegation lock is a shared house rule (skilletor bundle `getty-cpan-dist@getty`); the lane
+split is in `.claude/rules/sqlite-vecdb-rules.md`.
 
 | Task | Agent |
 |---|---|
