@@ -1,0 +1,20 @@
+---
+claimed_at: 2026-10-25T05:43:59Z
+claimed_by: offen-2610
+class: standard
+completed: 2026-10-25T05:43:59Z
+created: 2026-08-31T04:36:21Z
+id: 3
+priority: low
+started: 2026-10-25T05:38:16Z
+status: done
+tags:
+- api
+- collection
+title: No way to list/iterate entries in a collection
+updated: 2026-10-25T05:43:59Z
+---
+
+Collection exposes count() but no way to enumerate stored ids/entries without a search vector. Consider an ids() or each() iterator over meta_${name}. Confirm this is wanted before building — small scope, real gap.
+
+2026-10-25 05:42 Done f1b53ce. Decision: confirmed wanted, built the smallest form: ids() returns all ids in insertion order (rowid); no each() iterator. Test t/19_ids.t is red against old lib only as Can't locate object method ids - unavoidable for a new method.
