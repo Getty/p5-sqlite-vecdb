@@ -106,4 +106,30 @@ ok !$dbh->{AutoCommit}, 'failing batch did not end the caller\'s transaction';
 $dbh->commit;
 is $coll3->count, 1, 'the caller\'s earlier work survives the failed batch';
 
+# --- Names and metrics are validated before any SQL runs ---
+
+my $evil = 'x" USING vec0(embedding float[3]); DROP TABLE "meta_errors"; --';
+like dies { $vdb->collection($evil) },
+  qr/Invalid collection name/, 'name with quote and SQL croaks';
+like dies { $vdb->collection('has space') },
+  qr/Invalid collection name/, 'name with a space croaks';
+like dies { $vdb->collection('') },
+  qr/Invalid collection name/, 'empty name croaks';
+ok !(grep { $_ eq $evil } $vdb->collections),
+  'rejected name left no registry row behind';
+
+my $bad_metric = SQLite::VecDB->new(
+  db_file => ':memory:', dimensions => 3, distance_metric => 'cosnie',
+);
+like dies { $bad_metric->collection('typo') },
+  qr/Invalid distance_metric 'cosnie'/, 'unknown distance_metric croaks';
+is [ $bad_metric->collections ], [], 'rejected metric left no registry row behind';
+
+for my $metric (qw( cosine l2 l1 )) {
+  my $ok = SQLite::VecDB->new(
+    db_file => ':memory:', dimensions => 3, distance_metric => $metric,
+  );
+  ok lives { $ok->collection('fine_1') }, "metric $metric is accepted";
+}
+
 done_testing;

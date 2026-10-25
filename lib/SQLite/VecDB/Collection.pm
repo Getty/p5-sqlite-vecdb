@@ -16,7 +16,9 @@ has name => (
 
 =attr name
 
-The collection name. Used as suffix for the underlying SQLite tables.
+The collection name. Used as suffix for the underlying SQLite tables, so it
+may only contain C<A-Z>, C<a-z>, C<0-9> and C<_>. Anything else croaks in the
+constructor, before any SQL runs.
 
 =cut
 
@@ -37,6 +39,13 @@ has distance_metric => (
   default => 'cosine',
 );
 
+=attr distance_metric
+
+One of C<cosine> (default), C<l2> or C<l1>. Anything else croaks in the
+constructor, before any SQL runs.
+
+=cut
+
 has embedding => (
   is => 'ro',
   predicate => 'has_embedding',
@@ -49,8 +58,16 @@ has _initialized => (
   init_arg => undef,
 );
 
+my %METRIC = map { $_ => 1 } qw( cosine l2 l1 );
+
 sub BUILD {
   my ( $self ) = @_;
+  # name and metric are interpolated into DDL, so check them before any SQL
+  croak 'Invalid collection name \''.$self->name.'\': use only A-Z, a-z, 0-9 and _'
+    unless $self->name =~ /\A[A-Za-z0-9_]+\z/;
+  croak 'Invalid distance_metric \''.$self->distance_metric.'\': use one of '
+    .join(', ', sort keys %METRIC)
+    unless $METRIC{$self->distance_metric};
   $self->_ensure_tables;
   if ($self->has_embedding) {
     require SQLite::VecDB::Role::Embedding;
