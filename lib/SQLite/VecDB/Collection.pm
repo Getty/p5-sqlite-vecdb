@@ -44,6 +44,10 @@ has distance_metric => (
 One of C<cosine> (default), C<l2> or C<l1>. Anything else croaks in the
 constructor, before any SQL runs.
 
+C<dimensions> and C<distance_metric> are fixed when a collection is first
+created. Opening an existing collection with different values croaks, naming
+the stored and the requested value.
+
 =cut
 
 has embedding => (
@@ -84,10 +88,24 @@ sub _ensure_tables {
   my $metric = $self->distance_metric;
   my $dbh    = $self->dbh;
 
-  $dbh->do(q{
-    INSERT OR IGNORE INTO _vecdb_collections (name, dimensions, distance_metric)
-    VALUES (?, ?, ?)
-  }, {}, $name, $dims, $metric);
+  my $stored = $dbh->selectrow_hashref(
+    q{SELECT dimensions, distance_metric FROM _vecdb_collections WHERE name = ?},
+    {}, $name,
+  );
+  if ($stored) {
+    croak 'Collection \''.$name.'\' was created with dimensions '.$stored->{dimensions}
+      .', not '.$dims
+      unless $stored->{dimensions} == $dims;
+    croak 'Collection \''.$name.'\' was created with distance_metric '.$stored->{distance_metric}
+      .', not '.$metric
+      unless $stored->{distance_metric} eq $metric;
+  }
+  else {
+    $dbh->do(q{
+      INSERT INTO _vecdb_collections (name, dimensions, distance_metric)
+      VALUES (?, ?, ?)
+    }, {}, $name, $dims, $metric);
+  }
 
   $dbh->do(qq{
     CREATE VIRTUAL TABLE IF NOT EXISTS "vec_${name}" USING vec0(

@@ -6,6 +6,9 @@
   - Collection names must match [A-Za-z0-9_]+ and distance_metric must be
     cosine, l2 or l1; anything else croaks before SQL runs instead of leaving
     a half-created collection behind
+  - Reopening an existing collection with other dimensions or another
+    distance_metric croaks, naming the stored and the requested value, instead
+    of failing late inside sqlite-vec or silently misreading distances
 
 0.001     2026-02-24 23:24:36Z
   - Initial release
