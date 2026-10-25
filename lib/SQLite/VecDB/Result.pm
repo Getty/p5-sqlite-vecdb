@@ -62,7 +62,9 @@ has vector => (
 
 =attr vector
 
-The stored vector, if requested.
+The stored vector as an ArrayRef of numbers (single-precision floats). Only
+set when the result was fetched with C<include_vectors>; check with
+C<has_vector>.
 
 =cut
 

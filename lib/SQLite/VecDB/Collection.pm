@@ -150,9 +150,10 @@ sub search {
 
   my $name     = $self->name;
   my $vec_json = encode_json($vector);
+  my $cols     = $args{include_vectors} ? ', v.embedding' : '';
 
   my $sth = $self->dbh->prepare(qq{
-    SELECT m.id, m.metadata, m.content, v.distance
+    SELECT m.id, m.metadata, m.content, v.distance$cols
     FROM "vec_${name}" v
     JOIN "meta_${name}" m ON m.rowid = v.rowid
     WHERE v.embedding MATCH ?
@@ -168,6 +169,7 @@ sub search {
       distance => $row->{distance},
       metadata => $row->{metadata} ? decode_json($row->{metadata}) : {},
       ($row->{content} ? (content => $row->{content}) : ()),
+      ($args{include_vectors} ? (vector => [ unpack 'f<*', $row->{embedding} ]) : ()),
     );
   }
   return @results;
@@ -176,12 +178,15 @@ sub search {
 =method search
 
   my @results = $coll->search(
-    vector => [0.1, 0.2, ...],
-    limit  => 5,                  # default: 10
+    vector          => [0.1, 0.2, ...],
+    limit           => 5,    # default: 10
+    include_vectors => 1,    # default: off
   );
 
 Perform a KNN (k-nearest neighbor) search. Returns a list of
 L<SQLite::VecDB::Result> objects ordered by distance (closest first).
+With C<include_vectors> each result carries the stored vector in
+L<SQLite::VecDB::Result/vector>, as single-precision floats.
 
 =cut
 
@@ -191,24 +196,35 @@ sub get {
   my $name = $self->name;
 
   my $row = $self->dbh->selectrow_hashref(
-    qq{SELECT id, metadata, content FROM "meta_${name}" WHERE id = ?},
+    qq{SELECT rowid, id, metadata, content FROM "meta_${name}" WHERE id = ?},
     {}, $id,
   );
   return unless $row;
+
+  my $embedding;
+  if ($args{include_vectors}) {
+    ($embedding) = $self->dbh->selectrow_array(
+      qq{SELECT embedding FROM "vec_${name}" WHERE rowid = ?},
+      {}, $row->{rowid},
+    );
+  }
 
   return SQLite::VecDB::Result->new(
     id       => $row->{id},
     metadata => $row->{metadata} ? decode_json($row->{metadata}) : {},
     ($row->{content} ? (content => $row->{content}) : ()),
+    (defined $embedding ? (vector => [ unpack 'f<*', $embedding ]) : ()),
   );
 }
 
 =method get
 
   my $result = $coll->get(id => 'doc1');
+  my $result = $coll->get(id => 'doc1', include_vectors => 1);
 
 Retrieve a stored entry by ID. Returns a L<SQLite::VecDB::Result> or
-C<undef> if not found.
+C<undef> if not found. With C<include_vectors> the result carries the
+stored vector in L<SQLite::VecDB::Result/vector>.
 
 =cut
 

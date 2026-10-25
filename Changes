@@ -1,4 +1,6 @@
 {{$NEXT}}
+  - search and get take include_vectors => 1 to return the stored vector in
+    Result->vector, which was documented but never populated
 
 0.001     2026-02-24 23:24:36Z
   - Initial release
