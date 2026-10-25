@@ -1,6 +1,8 @@
 {{$NEXT}}
   - search and get take include_vectors => 1 to return the stored vector in
     Result->vector, which was documented but never populated
+  - add_batch joins a transaction the caller already opened instead of dying
+    with "Already in a transaction", like add and delete do
 
 0.001     2026-02-24 23:24:36Z
   - Initial release

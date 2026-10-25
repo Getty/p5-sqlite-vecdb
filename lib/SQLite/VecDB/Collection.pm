@@ -282,15 +282,16 @@ Returns the number of vectors in this collection.
 sub add_batch {
   my ( $self, @items ) = @_;
   my $dbh = $self->dbh;
-  $dbh->begin_work;
+  my $need_txn = $dbh->{AutoCommit};
+  $dbh->begin_work if $need_txn;
   eval {
     for my $item (@items) {
       $self->add(%$item);
     }
-    $dbh->commit;
+    $dbh->commit if $need_txn;
   };
   if (my $err = $@) {
-    eval { $dbh->rollback };
+    eval { $dbh->rollback } if $need_txn;
     croak "Batch add failed: $err";
   }
   return scalar @items;
@@ -303,7 +304,9 @@ sub add_batch {
     { id => 'doc2', vector => [...], metadata => { ... } },
   );
 
-Add multiple vectors in a single transaction.
+Add multiple vectors in a single transaction. Inside a transaction the
+caller opened on C<dbh>, the batch joins it: nothing is committed, and on
+failure nothing is rolled back, so the caller decides.
 
 =cut
 

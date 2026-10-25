@@ -84,4 +84,26 @@ like dies {
 is $coll2->count, 1, 'batch rolled back entirely — count still 1';
 ok !$coll2->get(id => 'new1'), 'new1 was rolled back';
 
+# --- Batch inside the caller's transaction joins it ---
+
+my $coll3 = $vdb->collection('batch_outer');
+my $dbh   = $vdb->dbh;
+
+$dbh->begin_work;
+is $coll3->add_batch(
+  { id => 'x', vector => [1,0,0] },
+  { id => 'y', vector => [0,1,0] },
+), 2, 'add_batch inside an outer transaction succeeds';
+ok !$dbh->{AutoCommit}, 'add_batch did not commit the caller\'s transaction';
+$dbh->rollback;
+is $coll3->count, 0, 'the caller\'s rollback undoes the batch';
+
+$dbh->begin_work;
+$coll3->add(id => 'keep', vector => [1,0,0]);
+like dies { $coll3->add_batch({ id => 'keep', vector => [0,1,0] }) },
+  qr/Batch add failed/, 'failing batch inside an outer transaction croaks';
+ok !$dbh->{AutoCommit}, 'failing batch did not end the caller\'s transaction';
+$dbh->commit;
+is $coll3->count, 1, 'the caller\'s earlier work survives the failed batch';
+
 done_testing;
