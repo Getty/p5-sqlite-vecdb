@@ -1,0 +1,20 @@
+---
+claimed_at: 2026-10-25T05:43:54Z
+claimed_by: offen-2610
+class: standard
+completed: 2026-10-25T05:43:54Z
+created: 2026-08-31T04:36:17Z
+id: 2
+priority: medium
+started: 2026-10-25T05:38:12Z
+status: done
+tags:
+- api
+- collection
+title: No update/upsert path — re-adding an existing id croaks on UNIQUE
+updated: 2026-10-25T05:43:54Z
+---
+
+meta_${name}.id is UNIQUE, so calling add() twice with the same id dies with "Failed to add vector: UNIQUE constraint failed". There is no update() or upsert option to replace a stored vector/metadata. Add an explicit update (or add(..., replace => 1)) that rewrites both the vec_ and meta_ rows in one transaction, with a regression test.
+
+2026-10-25 05:41 Done b4e66fc. Decision: add(..., replace => 1) rather than a separate update(); it overwrites vector, metadata and content as a whole (omitted fields are dropped), unknown id just adds. Test t/18_replace.t red against old lib (UNIQUE croak).
