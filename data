@@ -1,0 +1,22 @@
+---
+claimed_at: 2026-10-25T05:43:48Z
+claimed_by: offen-2610
+class: standard
+completed: 2026-10-25T05:43:48Z
+created: 2026-08-31T04:36:13Z
+id: 1
+priority: medium
+started: 2026-10-25T05:38:07Z
+status: done
+tags:
+- api
+- result
+title: Result->vector is never populated by search or get
+updated: 2026-10-25T05:43:48Z
+---
+
+SQLite::VecDB::Result has a `vector` attribute (predicate has_vector) documented as "The stored vector, if requested", but neither Collection::search nor Collection::get ever set it, and there is no option to request it. Either wire an include-vectors path (read the vec0 embedding back and populate the attr) or drop the dead attribute. Decide and make the code and POD agree.
+
+2026-10-25 05:41 Done 75e9901 (branch offen-2610). Decision: wired, not dropped - search/get take include_vectors => 1 (off by default, since get needs an extra vec0 lookup); vector comes back as float32 values. Test t/12_include_vectors.t was red against old lib (vector undef).
+
+2026-10-25 05:41 Also found: replace-in-outer-transaction (k2) deletes the old rows before inserting, so if the insert fails inside a caller's transaction the old entry is gone until the caller rolls back (same contract as add/delete, a savepoint would tighten it). Also: skilletor reported .worktreeinclude updated - still uncommitted, needs its own commit.
