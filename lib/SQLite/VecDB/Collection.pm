@@ -328,6 +328,23 @@ Returns the number of vectors in this collection.
 
 =cut
 
+sub ids {
+  my ( $self ) = @_;
+  my $name = $self->name;
+  return @{ $self->dbh->selectcol_arrayref(
+    qq{SELECT id FROM "meta_${name}" ORDER BY rowid},
+  ) };
+}
+
+=method ids
+
+  my @ids = $coll->ids;
+
+Returns the ids of all stored entries in insertion order, without needing a
+search vector. Use L</get> to fetch an entry.
+
+=cut
+
 sub add_batch {
   my ( $self, @items ) = @_;
   my $dbh = $self->dbh;

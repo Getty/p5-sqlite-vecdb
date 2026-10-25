@@ -11,6 +11,8 @@
     of failing late inside sqlite-vec or silently misreading distances
   - add takes replace => 1 to overwrite the vector, metadata and content of an
     existing id in one transaction
+  - New ids method lists the stored ids of a collection without a search
+    vector
 
 0.001     2026-02-24 23:24:36Z
   - Initial release
