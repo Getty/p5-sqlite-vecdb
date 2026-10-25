@@ -144,6 +144,15 @@ sub add {
   my $need_txn = $dbh->{AutoCommit};
   $dbh->begin_work if $need_txn;
   eval {
+    if ($args{replace}) {
+      my ($old) = $dbh->selectrow_array(
+        qq{SELECT rowid FROM "meta_${name}" WHERE id = ?}, {}, $id,
+      );
+      if (defined $old) {
+        $dbh->do(qq{DELETE FROM "vec_${name}" WHERE rowid = ?}, {}, $old);
+        $dbh->do(qq{DELETE FROM "meta_${name}" WHERE rowid = ?}, {}, $old);
+      }
+    }
     $dbh->do(
       qq{INSERT INTO "meta_${name}" (id, metadata, content) VALUES (?, ?, ?)},
       {}, $id, $json_meta, $content,
@@ -171,10 +180,15 @@ sub add {
     vector   => [0.1, 0.2, ...],
     metadata => { title => 'Hello' },   # optional
     content  => 'Original text...',      # optional
+    replace  => 1,                       # optional
   );
 
 Store a vector with optional metadata and content. The C<vector> ArrayRef
 must have exactly C<dimensions> elements.
+
+Adding an C<id> that already exists croaks. With C<replace> the stored vector,
+metadata and content are rewritten as a whole (fields left out are dropped, not
+kept) in the same transaction, and an unknown C<id> is simply added.
 
 =cut
 

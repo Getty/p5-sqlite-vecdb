@@ -9,6 +9,8 @@
   - Reopening an existing collection with other dimensions or another
     distance_metric croaks, naming the stored and the requested value, instead
     of failing late inside sqlite-vec or silently misreading distances
+  - add takes replace => 1 to overwrite the vector, metadata and content of an
+    existing id in one transaction
 
 0.001     2026-02-24 23:24:36Z
   - Initial release
