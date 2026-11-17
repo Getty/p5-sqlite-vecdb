@@ -13,6 +13,8 @@
     existing id in one transaction
   - New ids method lists the stored ids of a collection without a search
     vector
+  - Requires Alien::sqlite_vec 0.002, which declares DBD::SQLite as a build
+    prerequisite for the sqlite3ext.h it builds against
 
 0.001     2026-02-24 23:24:36Z
   - Initial release

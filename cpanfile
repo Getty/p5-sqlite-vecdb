@@ -1,4 +1,4 @@
-requires 'Alien::sqlite_vec';
+requires 'Alien::sqlite_vec', '0.002';
 requires 'Carp';
 requires 'DBD::SQLite', '1.70';
 requires 'DBI';
