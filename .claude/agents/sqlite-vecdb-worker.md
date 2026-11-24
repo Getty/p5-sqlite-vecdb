@@ -2,13 +2,12 @@
 name: sqlite-vecdb-worker
 description: "Default SQLite::VecDB worker — implement, refactor, debug, and test code in this distribution. Pre-loaded with the sqlite-vec architecture (extension loading, vec0 + metadata layout, KNN query, embedding role), Moose, and release conventions. Owns everything behavior-relevant under lib/ and t/. Leaves a commit-ready tree; never commits — commits belong to sqlite-vecdb-release-manager."
 model: inherit
-briefing:
-  skills:
-    - sqlite-vecdb-core
-    - getty-perl-core
-    - getty-perl-moose
-    - kanban-issues-karr-ticket
-    - getty-perl-pod
+skills:
+  - sqlite-vecdb-core
+  - getty-perl-core
+  - getty-perl-moose
+  - kanban-issues-karr-ticket
+  - getty-perl-pod
 ---
 
 You are the sqlite-vecdb-worker for **SQLite::VecDB — SQLite as a vector database via sqlite-vec**.

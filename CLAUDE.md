@@ -16,7 +16,7 @@ split is in `.claude/rules/sqlite-vecdb-rules.md`.
 | Implement / refactor / debug behavior-relevant code (lib/, t/) | `sqlite-vecdb-worker` (default) |
 | Commits, `Changes`, card → done, pre-release audit | `sqlite-vecdb-release-manager` |
 
-The agents carry their skills via `briefing.skills` (see `.claude/agents/`); the main agent
+The agents carry their skills via `skills:` (see `.claude/agents/`); the main agent
 delegates rather than loading them. Skill sources live under `.claude/skills/` — architecture
 and invariants in `sqlite-vecdb-core`, house conventions in `getty-perl-core` /
 `getty-perl-moose`, release in `getty-perl-release-author-getty` / `perl-release-dist-ini`,
